@@ -1,12 +1,215 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="jspsych/dist/jspsych.js"></script>
+    <script src="jspsych/dist/plugin-preload.js"></script>
+    <script src="jspsych/dist/plugin-survey-text.js"></script>
+    <script src="jspsych/dist/plugin-html-button-response.js"></script>
+    <script src="jspsych/dist/plugin-audio-button-response.js"></script>
+    <script src="jspsych/dist/plugin-html-keyboard-response.js"></script>
+    <!-- <script src="image_audio_animate.js"></script> -->
+    <link href="jspsych/dist/jspsych.css" rel="stylesheet" type="text/css" />
+    <link href="index.css" rel="stylesheet" type="text/css" />
     <title>Document</title>
 </head>
-<body>
-    
-</body>
+
+<body></body>
+<script>
+    const jsPsych = initJsPsych();
+
+    const timeline = [];
+
+    const preload_data = {
+        type: jsPsychPreload,
+        auto_preload: true
+    };
+
+    const info = {
+        type: jsPsychSurveyText,
+        preamble: "Enter relevant information below:",
+        questions: [
+            { prompt: 'Subject ID:', name: 'ID' },
+            { prompt: 'Subject Age', name: 'Age' }
+        ],
+        button_label: ["Begin"]
+    }
+
+    const intro = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<p>In this game, youll learn about some things from an alien planet.` +
+            ` But first, let's practice thinking about some things from planet Earth. Are you ready?</p>`,
+        choices: ['Next'],
+    };
+
+    const practice_banana = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<p>Let's think about all of the bananas in the world. How many bananas do you think are yellow?</p>`,
+        choices: [
+            `<img src = "img/banana_few.png" alt = 'banana_few' width="200px" height="200px"><p>few</p>`,
+            `<img src = "img/banana_some.png" alt = 'banana_some' width="200px" height="200px"><p>some</p>`,
+            `<img src = "img/banana_most.png" alt = 'banana_most' width="200px" height="200px"><p>most</p>`,
+            `<img src = "img/banana_almost_all.png" alt = 'banana_almostall' width="200px" height="200px"><p>almost all</p>`,
+        ]
+    }
+
+    const practice_cookie = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<p>Let's think about all of the cookies in the world. How many cookies do you think are square?</p>`,
+        choices: [
+            `<img src = "img/cookie_few.png" alt = 'cookie_few' width="200px" height="200px"><p>few</p>`,
+            `<img src = "img/cookie_some.png" alt = 'cookie_some' width="200px" height="200px"><p>some</p>`,
+            `<img src = "img/cookie_most.png" alt = 'cookie_most' width="200px" height="200px"><p>most</p>`,
+            `<img src = "img/cookie_almost_all.png" alt = 'cookie_almostall' width="200px" height="200px"><p>almost all</p>`,
+        ]
+    }
+    const blip_intro = {
+        on_start: function (trail) {
+            jsPsych.pluginAPI.getAudioBuffer('sound/tmp_sound.mp3')
+                .then(function (audio) {
+                    audio.play();
+                })
+                .catch(function (err) {
+                    console.error('Audio file failed to load')
+                })
+        },
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `<p>In this game, you'll learn about some things from an alien planet.
+Blip the alien will show and talk about some things on her planet, and you'll make guesses about what those things are usually like.
+Can you say hi to Blip?</p><img src = "img/alien1.png" alt = "blip" width="200px" height="200px">
+<div class="image-container">
+    <img src="img/speechbubble.jpg" alt="speech" width="100" height="100">
+    <div class="overlay-text" id="overlay-text">Hi! I'm Blip</div>
+  </div>`,
+        choices: ['Next'],
+        css_classes: ['blip']
+    }
+
+    const objs = []
+    const props = []
+    for (let i = 1; i <= 6; i++) {
+        let path = `img/objects/object${i}`
+        let prop_path = `img/prop_selection/object${i}`
+        let obj = [
+            [`${path}_blue.PNG`, `${path}_not_blue.PNG`],
+            [`${path}_red.PNG`, `${path}_not_red.PNG`],
+            [`${path}_spotted.PNG`, `${path}_not_spotted.PNG`],
+            [`${path}_striped.PNG`, `${path}_not_striped.PNG`],
+            [`${path}_tall.PNG`, `${path}_not_tall.PNG`],
+            [`${path}_wide.PNG`, `${path}_not_wide.PNG`],
+        ]
+
+        let result = ['few', 'some', 'most', 'almost_all', 'all']
+        let attr = ['blue', 'red', 'spotted', 'striped', 'tall', 'wide']
+        let prop = []
+        for (let j = 0; j < 6; j++) {
+            let tmp_store = []
+            for (let r = 0; r < result.length; r++) {
+                tmp_store.push(`${prop_path}_${attr[j]}_${result[r]}.PNG`)
+            }
+            prop.push(tmp_store)
+        }
+
+        objs.push(obj)
+        props.push(prop)
+    }
+
+    console.log(props)
+
+    // preload an array of images
+    const preload_res = (imgs) => {
+        return {
+            type: jsPsychPreload,
+            images: imgs,
+            show_detailed_errors: true
+        }
+    }
+
+    const create_select = (imgs) => {
+
+        // console.log(imgs)
+        return {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `<p>Let's think about all of the cookies in the world. How many cookies do you think are square?</p>`,
+            choices: imgs.map((i)=>{
+            return `<img src = "${i}" alt = 'cookie_few' width="200px" height="200px"><p>few</p>`
+        })
+        }
+    }
+
+
+
+    const create_muti_image = (frames) => {
+
+        var res = {
+            timeline: [{
+                type: jsPsychHtmlKeyboardResponse,
+                stimulus: function () {
+                    var current_frame = jsPsych.timelineVariable('images');
+                    // console.log(current_frame)
+                    var html = '<div style="display: flex; flex-wrap: wrap; justify-content: center;">';
+                    current_frame.forEach(function (imageSrc) {
+                        html += '<img src="' + imageSrc + '" style="height: 150px; margin: 5px;">';
+                    });
+                    html += '</div>';
+                    return html;
+                },
+                trial_duration: 1000,
+                on_start: function (trial) {
+                    // console.log('triggered')
+                    var audio = jsPsych.timelineVariable('audio');
+                    jsPsych.pluginAPI.getAudioBuffer(audio)
+                        .then(function (audio) {
+                            trial.trial_duration = Math.ceil(audio.trial_duration * 1000) + 1000
+                            audio.play();
+                        })
+                        .catch(function (err) {
+                            console.error('Audio file failed to load')
+                        })
+                },
+            }],
+            timeline_variables: frames
+        }
+        return res
+    }
+
+    timeline.push(preload_data)
+    timeline.push(info)
+    timeline.push(intro)
+    timeline.push(practice_banana)
+    timeline.push(practice_cookie)
+    timeline.push(blip_intro)
+
+    for (let i = 0; i < objs.length; i++) {
+        // console.log(i);
+        // random select attribute
+
+        let random_attr =Math.floor(Math.random() * 6)
+        let attr = objs[i][random_attr]
+
+        timeline.push(preload_res(attr))
+        // assemble animation
+        let rand1 = Math.floor(Math.random() * 2)
+        let rand2 = 1 - rand1
+        let frames = [
+            { images: ['img/alien1.png', 'img/speechbubble.jpg'], audio: 'sound/tmp_sound.mp3' },
+            { images: ['img/alien1.png', attr[rand1]], audio: 'sound/tmp_sound.mp3' },
+            { images: ['img/alien1.png', 'img/speechbubble.jpg'], audio: 'sound/tmp_sound.mp3' },
+            { images: ['img/alien1.png', attr[rand2]], audio: 'sound/tmp_sound.mp3' }
+        ];
+
+        timeline.push(create_muti_image(frames))
+
+        timeline.push(preload_res(props[i][random_attr]))
+        // console.log(props[i])
+        timeline.push(create_select(props[i][random_attr]))
+
+    }
+
+    jsPsych.run(timeline);
+</script>
+
 </html>
