@@ -12,3 +12,69 @@
     font-size: 15px;
     /* font-weight: bold; */
 }
+
+
+.responsive {
+    max-width: 100%;
+    height: auto;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+    /* margin-bottom: 5%; */
+}
+
+.overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: calc(16px + 1vw);
+    line-height: 1.5;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 25% 25% auto;
+    text-align: center;
+    align-items: center;
+}
+
+
+.stim {
+    max-width: 600px;
+    height: auto;
+}
+
+.fade-in-out {
+    opacity: 1;
+    -webkit-animation: fade 5s linear forwards;
+    animation: fade 5s linear forwards;
+}
+
+@-webkit-keyframes fade {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    20%,
+    80% {
+        opacity: 1;
+    }
+}
+
+@keyframes fade {
+
+    0%,
+    100% {
+        opacity: 0
+    }
+
+    20%,
+    80% {
+        opacity: 1
+    }
+}
