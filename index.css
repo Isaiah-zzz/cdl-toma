@@ -41,9 +41,25 @@
     align-items: center;
 }
 
+.blip-intro-grid {
+    margin-left: 10%;
+    width: 80%;
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    text-align: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.blip-container{
+    text-align: center;
+    align-items: center;
+}
+
 
 .stim {
-    max-width: 600px;
+    max-width: 100%;
+    /* width: 100px; */
     height: auto;
 }
 

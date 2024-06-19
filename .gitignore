@@ -92,3 +92,4 @@ Thumbs.db
 
 .vscode/*
 !.vscode/extensions.json
+server/data/
