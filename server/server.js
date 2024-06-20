@@ -11,9 +11,17 @@ app.use(bodyParser.json());
 
 app.post('/data', (req, res) => {
     const jsonData = req.body;
-    
+
+    const dataDir = path.join(__dirname, 'data');
+
+    // Middleware to create the 'data' directory if it doesn't exist
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir);
+        console.log(`Created directory: ${dataDir}`);
+    }
     // Define the path to the CSV file
-    const csvPath = path.join(__dirname, 'data', 'received_data.csv');
+    const csvPath = path.join(dataDir, 'received_data.csv');
+    // const csvPath = path.join(__dirname, 'data', 'received_data.csv');
 
     // Check if the file exists and has data
     let fileExists = fs.existsSync(csvPath);

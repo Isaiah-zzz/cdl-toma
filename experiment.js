@@ -3,7 +3,7 @@ function sendDataToServer(data) {
     // const csvData = jsPsych.data.get().csv();
 
     // Send the data to the server
-    fetch('http://localhost:3000/data', {
+    fetch('http://147.182.195.234:3000/data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
